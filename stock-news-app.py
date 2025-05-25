@@ -8,6 +8,8 @@ from langchain.llms import OpenAI
 from langchain.chains import RetrievalQA
 from langchain.docstore.document import Document
 
+openai_api_key = os.getenv("OPENAI_API_KEY")
+
 # Load and parse news
 @st.cache_data(show_spinner=True)
 def load_news(filepath):
@@ -24,15 +26,16 @@ def load_news(filepath):
     return docs
 
 # Create FAISS vector store from documents
+# FAISS only embeds the page_content, and metadata is carried along for retrieval (not embedded).
 def create_vector_store(documents):
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
     texts = text_splitter.split_documents(documents)
-    embeddings = OpenAIEmbeddings()
+    embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
     return FAISS.from_documents(texts, embeddings)
 
 # Streamlit UI
 st.set_page_config(page_title="Financial News Chat", layout="wide")
-st.title("📈 Financial News Chat (RAG + GenAI)")
+st.title(" Financial News Chat")
 
 query = st.text_input("Ask a question about recent financial news:", "")
 
@@ -45,12 +48,12 @@ if "vectordb" not in st.session_state:
 # Query response
 if query:
     retriever = st.session_state.vectordb.as_retriever(search_type="similarity", search_kwargs={"k": 4})
-    qa_chain = RetrievalQA.from_chain_type(llm=OpenAI(temperature=0), chain_type="stuff", retriever=retriever)
+    qa_chain = RetrievalQA.from_chain_type(llm=OpenAI(temperature=0, openai_api_key=openai_api_key), chain_type="stuff", retriever=retriever)
     response = qa_chain.run(query)
-    st.markdown("### 🧠 Answer")
+    st.markdown("#Answer")
     st.write(response)
 
-    # Optional: show sources
+    # check metadate separation from embeddings
     st.markdown("---")
     st.markdown("### 📚 Retrieved Documents")
     docs = retriever.get_relevant_documents(query)
