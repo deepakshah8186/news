@@ -27,7 +27,8 @@ Place a JSON file named `stock_news.json` in the root directory. The file should
 {
   "AAPL": [
     {
-      "title": "Apple releases new iPhone",
+      "title": "Apple releases new iPhone", 
+      "ticker": "AAPL",
       "full_text": "Apple Inc. today announced the launch of its latest iPhone...",
       "link": "https://example.com/apple-news"
     }
@@ -48,7 +49,7 @@ Place a JSON file named `stock_news.json` in the root directory. The file should
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/news.git
+   git clone https://github.com/deepakshah8186/news.git
    ```
 
 2. Install dependencies:
@@ -65,12 +66,6 @@ Place a JSON file named `stock_news.json` in the root directory. The file should
    ```bash
    streamlit run stock-news-app.py
    ```
-
-## 📄 Evaluation Criteria
-
-- Correctness of semantic retrieval and summarization
-- Clean code and project structure
-- Not evaluated on UI design — focus is on functionality and code quality
 
 ## 📬 License
 
